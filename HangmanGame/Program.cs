@@ -6,7 +6,7 @@ namespace HangmanGame
     {
         static void Main(string[] args)
         {
-            var game = new Hangman();
+            var game = new HangmanGame();
             game.StartGame();
         }
     }
