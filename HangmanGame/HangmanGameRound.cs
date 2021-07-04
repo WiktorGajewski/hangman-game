@@ -135,12 +135,14 @@ namespace HangmanGame
                 PrintGameInfo();
                 Console.Write("\tCategory: Capitals");
                 _hangman.PrintPuzzle();
+                Console.WriteLine(_hangman.GetHangmanArt());
                 if (_hangman.LifePoints == 1)
                     PrintHint();
                 Guessing();
 
                 if(_hangman.LifePoints <= 0)
                 {
+                    Console.WriteLine(_hangman.GetHangmanArt());
                     Console.WriteLine("\n\tYou lost!");
                     Console.WriteLine($"\tThe answer was: {_capital}");
                     stopWatch.Stop();
@@ -150,6 +152,7 @@ namespace HangmanGame
                     break;
                 } else if(_hangman.LettersLeftHidden <= 0)
                 {
+                    Console.WriteLine(_hangman.GetHangmanArt());
                     Console.WriteLine("\n\tYou won!");
                     _hangman.PrintPuzzle();
                     stopWatch.Stop();

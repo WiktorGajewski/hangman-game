@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace HangmanGame
 {
@@ -80,6 +81,61 @@ namespace HangmanGame
                 LifePoints -= 2;
                 return false;
             }
+        }
+        public string GetHangmanArt()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("\t _________\n");
+            sb.Append("\t |      \\|\n");
+            switch (LifePoints)
+            {
+                case 5:
+                    sb.Append("\t         |\n");
+                    sb.Append("\t         |\n");
+                    sb.Append("\t         |\n");
+                    sb.Append("\t         |\n");
+                    break;
+                case 4:
+                    sb.Append("\t O       |\n");
+                    sb.Append("\t |       |\n");
+                    sb.Append("\t         |\n");
+                    sb.Append("\t         |\n");
+                    break;
+                case 3:
+                    sb.Append("\t O       |\n");
+                    sb.Append("\t/|       |\n");
+                    sb.Append("\t         |\n");
+                    sb.Append("\t         |\n");
+                    break;
+                case 2:
+                    sb.Append("\t O       |\n");
+                    sb.Append("\t/|\\      |\n");
+                    sb.Append("\t         |\n");
+                    sb.Append("\t         |\n");
+                    break;
+                case 1:
+                    sb.Append("\t O       |\n");
+                    sb.Append("\t/|\\      |\n");
+                    sb.Append("\t/        |\n");
+                    sb.Append("\t         |\n");
+                    break;
+                case 0:
+                    sb.Append("\t O       |\n");
+                    sb.Append("\t/|\\      |\n");
+                    sb.Append("\t/ \\      |\n");
+                    sb.Append("\t         |\n");
+                    break;
+                default:    //for those who ended with -1 life points (yes you can)
+                    sb.Append("\t(_)      |\n");
+                    sb.Append("\t/|\\      |\n");
+                    sb.Append("\t/ \\      |\n");
+                    sb.Append("\tTIS BUT A|\n");
+                    sb.Append("\tSCRATCH  |\n");
+                    break;
+            }
+            sb.Append("\t===========\n");
+            string hangmanArt = sb.ToString();
+            return hangmanArt;
         }
     }
 }
