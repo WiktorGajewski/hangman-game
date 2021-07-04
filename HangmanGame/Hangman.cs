@@ -28,7 +28,7 @@ namespace HangmanGame
         }
         public void PrintPuzzle()
         {
-            Console.Write("\t");
+            Console.Write('\t');
             foreach (var character in _solutionHangman)
             {
                 if (character.visible == true)
@@ -58,7 +58,7 @@ namespace HangmanGame
                     if (char.ToLower(_solutionHangman[i].letter) == char.ToLower(letter))
                     {
                         letterFound = true;
-                        _solutionHangman[i] = (true, _solutionHangman[i].letter); //letter is visible now
+                        _solutionHangman[i] = (true, _solutionHangman[i].letter); //quessed letter is visible now
                         LettersLeftHidden--;
                     }
                 }
