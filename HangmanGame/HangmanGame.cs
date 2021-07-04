@@ -4,43 +4,45 @@ namespace HangmanGame
 {
     class HangmanGame
     {
+        private bool keepPlaying;
+
         public HangmanGame()
         {
+            keepPlaying = true;
         }
+
         public void StartGame()
         {
-            bool keepPlaying = true;
             while(keepPlaying)
             {
-                try
-                {
-                    var gameRound = new HangmanGameRound();
-                    gameRound.NewRound();   //starting a round
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("An error occurred while running the program.");
-                    Console.WriteLine(e);
-                    break;
-                }
+                Console.WriteLine("\n\t1. Play");
+                Console.WriteLine("\t2. Exit");
 
-                for (; ; )  //question about restarting the program
-                {
-                    Console.WriteLine("\n\tDo you want to give it another try? (y/n)");
-                    Console.Write("\t");
-                    char anotherTry = Console.ReadKey().KeyChar;
-                    if (anotherTry == 'y')
-                        break;
-                    else if (anotherTry == 'n')
-                    {
-                        keepPlaying = false;
-                        break;
-                    }
-                    else
-                        Console.WriteLine("\tPlease use only 'y' or 'n'");
-                }
+                Console.Write("\t:");
+                char choice = Console.ReadKey().KeyChar;
 
-                Console.Clear();
+                switch(choice)
+                {
+                    case '1':
+                        {
+                            Console.Clear();
+                            var gameRound = new HangmanGameRound();
+                            gameRound.NewRound();
+                        }
+                        break;
+                    case '2':
+                        {
+                            Console.Clear();
+                            Console.WriteLine("\n\tThank you for playing");
+                            keepPlaying = false;
+                        }
+                        break;
+                    default:
+                        {
+                            Console.WriteLine("\n\tInvalid input! Please use avaible options!");
+                        }
+                        break;
+                }
             }
         }
     }

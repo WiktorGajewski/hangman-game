@@ -1,75 +1,79 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using HangmanGame.Utilities;
+using System.Linq;
 
 namespace HangmanGame
 {
-    class Hangman
+    class Hangman : IHangman
     {
         public int LifePoints { get; private set; }
-        private string _capital;
-        private List<(bool visible, char letter)> _solutionHangman;
+        private readonly string _capital;
+        private readonly List<Letter> _letters;
         public int LettersLeftHidden { get; private set; }
+
         public Hangman(string capital)
         {
+            Guard.CheckNullOrEmpty(capital, nameof(capital));
+
             LifePoints = 5;
             _capital = capital;
             LettersLeftHidden = capital.Length;
-            _solutionHangman = new List<(bool visible, char letter)>();
-            for (int i = 0; i < capital.Length; i++)
-            {
-                if (capital[i] == ' ')
-                {
-                    _solutionHangman.Add((true, capital[i]));
-                    LettersLeftHidden--;
-                }
-                else
-                    _solutionHangman.Add((false, capital[i]));
-            }
+            _letters = new List<Letter>();
+
+            InitLetters();
         }
+
         public void PrintPuzzle()
         {
             Console.Write('\t');
-            foreach (var character in _solutionHangman)
+
+            foreach (var letter in _letters)
             {
-                if (character.visible == true)
-                    Console.Write(character.letter);
+                if (letter.IsVisible == true)
+                {
+                    Console.Write(letter.Value);
+                }
                 else
+                {
                     Console.Write("_");
+                }
             }
+
             Console.WriteLine();
         }
-        public void UncoverPuzzle()
-        {
-            for (int i = 0; i < _solutionHangman.Count; i++)     //all letters are made visible
-            {
-                if (_solutionHangman[i].visible == false)
-                {
-                    _solutionHangman[i] = (true, _solutionHangman[i].letter);
-                }
-            }
-        }
+        
         public bool GuessLetter(char letter)
         {
-            bool letterFound = false;
-            for (int i=0; i<_solutionHangman.Count; i++)
+            bool result = false;
+            var letterFound = _letters.FirstOrDefault(l => char.ToLower(l.Value) == char.ToLower(letter));
+
+            if (letterFound != null)
             {
-                if (_solutionHangman[i].visible == false)
+                result = true;
+
+                _letters.ForEach(l =>
                 {
-                    if (char.ToLower(_solutionHangman[i].letter) == char.ToLower(letter))
+                    if (char.ToLower(l.Value) == char.ToLower(letter))
                     {
-                        letterFound = true;
-                        _solutionHangman[i] = (true, _solutionHangman[i].letter); //quessed letter is visible now
-                        LettersLeftHidden--;
+                        l.IsVisible = true;
                     }
-                }
+                });
             }
-            if (!letterFound)
+            else
+            {
                 LifePoints--;
-            return letterFound;
+                result = false;
+            }
+
+            return result;
         }
+
         public bool GuessWord(string word)
         {
+            Guard.CheckNullOrEmpty(word, nameof(word));
+
             if(word.ToLower() == _capital.ToLower())
             {
                 UncoverPuzzle();
@@ -82,7 +86,8 @@ namespace HangmanGame
                 return false;
             }
         }
-        public string GetHangmanArt()
+
+        public void PrintHangmanArt()
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("\t _________\n");
@@ -135,7 +140,34 @@ namespace HangmanGame
             }
             sb.Append("\t===========\n");
             string hangmanArt = sb.ToString();
-            return hangmanArt;
+
+            Console.WriteLine(hangmanArt);
+        }
+
+        private void UncoverPuzzle()
+        {
+            foreach (var letter in _letters)
+            {
+                if (letter.IsVisible == false)
+                {
+                    letter.IsVisible = true;
+                }
+            }
+        }
+
+        private void InitLetters()
+        {
+            foreach (var letter in _capital)
+            {
+                if(letter == ' ')
+                {
+                    _letters.Add(new Letter(letter, true));
+                }
+                else
+                {
+                    _letters.Add(new Letter(letter, false));
+                }
+            }
         }
     }
 }

@@ -6,8 +6,16 @@ namespace HangmanGame
     {
         static void Main(string[] args)
         {
-            var game = new HangmanGame();
-            game.StartGame();
+            try
+            {
+                var game = new HangmanGame();
+                game.StartGame();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("An error occurred while running the program.");
+                Console.WriteLine(e.Message);
+            }
         }
     }
 }
