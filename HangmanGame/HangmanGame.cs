@@ -17,7 +17,7 @@ namespace HangmanGame
                     var gameRound = new HangmanGameRound();
                     gameRound.NewRound();   //starting a round
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Console.WriteLine("An error occurred while running the program.");
                     Console.WriteLine(e);

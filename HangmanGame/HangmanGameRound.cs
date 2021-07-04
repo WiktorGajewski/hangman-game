@@ -2,6 +2,8 @@
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace HangmanGame
 {
@@ -10,14 +12,24 @@ namespace HangmanGame
         private string _country;
         private string _capital;
         private Hangman _hangman;
+        private ScoreManager _scoreManager;
+        private List<char> _notInWordList;
+        private int _quessingLetterCount;
+        private int _quessingWordCount;
+        private int _quessingTime;
         public HangmanGameRound()
         {
             string[] solution = TakeRandomLineFromFile().Split(" | ");  //picking random country (and it's capital)
             _country = solution[0];
             _capital = solution[1];
             _hangman = new Hangman(_capital);
+            _scoreManager = new ScoreManager();
+            _notInWordList = new List<char>();
+            _quessingLetterCount = 0;
+            _quessingWordCount = 0;
+            _quessingTime = 0;
         }
-        private string TakeRandomLineFromFile()
+        private string TakeRandomLineFromFile()     //take random country-capital pair
         {
             string filePath = "Assets/countries_and_capitals.txt";
             if (File.Exists(filePath))
@@ -37,12 +49,18 @@ namespace HangmanGame
         }
         private void PrintHint()
         {
-            Console.WriteLine($"\n\tThe capital of {_country}");
+            Console.WriteLine($"\n\tHint: The capital of {_country}");
         }
         private void PrintGameInfo()
         {
             Console.WriteLine("\t[---------------- HANGMAN ----------------]\n");
-            Console.WriteLine($"\tYour life point: {_hangman.LifePoints}\n");
+            Console.WriteLine($"\tYour life point: {_hangman.LifePoints}");
+            Console.Write($"\tNot in word:");
+            foreach(char letter in _notInWordList)
+            {
+                Console.Write($" {letter} ");
+            }
+            Console.WriteLine('\n');
         }
         private void GuessLetter()
         {
@@ -54,9 +72,16 @@ namespace HangmanGame
                 if (char.IsLetter(letter))
                 {
                     if (_hangman.GuessLetter(letter))
+                    {
                         Console.WriteLine("\n\tFound it!");
+                        _quessingLetterCount++;
+                    }
                     else
+                    {
                         Console.WriteLine("\n\tYou missed! You are losing 1 life point!");
+                        _notInWordList.Add(letter);
+                        _quessingLetterCount++;
+                    }
                     return;
                 }
                 Console.Write("\n\tThis wasn't a letter. Try again: ");
@@ -66,7 +91,7 @@ namespace HangmanGame
         {
             Console.Write("\n\tWhat is your answer?  ");
             string word = Console.ReadLine();
-
+            _quessingWordCount++;
             if (_hangman.GuessWord(word))
                 Console.WriteLine("\n\tCongratulations! You were right!");
             else
@@ -103,7 +128,9 @@ namespace HangmanGame
         }
         public void NewRound()
         {
-            while (true)    //quessing till you win or lose
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+            while (true)        //quessing till you win or lose
             {
                 PrintGameInfo();
                 Console.Write("\tCategory: Capitals");
@@ -116,14 +143,23 @@ namespace HangmanGame
                 {
                     Console.WriteLine("\n\tYou lost!");
                     Console.WriteLine($"\tThe answer was: {_capital}");
+                    stopWatch.Stop();
+                    _quessingTime = stopWatch.Elapsed.Seconds + (stopWatch.Elapsed.Minutes * 60);
+                    Console.WriteLine($"\n\tYou failed to guess the capital after {_quessingLetterCount} letters. It took you {_quessingTime} seconds.");
+                    _scoreManager.PrintBestScores();
                     break;
                 } else if(_hangman.LettersLeftHidden <= 0)
                 {
                     Console.WriteLine("\n\tYou won!");
                     _hangman.PrintPuzzle();
+                    stopWatch.Stop();
+                    _quessingTime = stopWatch.Elapsed.Seconds + (stopWatch.Elapsed.Minutes * 60);
+                    Console.WriteLine($"\n\tYou guessed the capital after {_quessingLetterCount} letters. It took you {_quessingTime} seconds.");
+                    _scoreManager.SaveScore(DateTime.Now, _quessingTime, _quessingWordCount + _quessingLetterCount, _capital);
+                    _scoreManager.PrintBestScores();
                     break;
                 }
-                Thread.Sleep(3000); //delay for 3 seconds
+                Thread.Sleep(1000); //delay for 1 second
                 Console.Clear();
             }
         }
