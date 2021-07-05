@@ -55,9 +55,10 @@ namespace HangmanGame
 
                 _letters.ForEach(l =>
                 {
-                    if (char.ToLower(l.Value) == char.ToLower(letter))
+                    if (char.ToLower(l.Value) == char.ToLower(letter) && l.IsVisible == false)
                     {
                         l.IsVisible = true;
+                        LettersLeftHidden--;
                     }
                 });
             }
@@ -77,7 +78,6 @@ namespace HangmanGame
             if(word.ToLower() == _capital.ToLower())
             {
                 UncoverPuzzle();
-                LettersLeftHidden = 0;
                 return true;
             }
             else
@@ -153,6 +153,7 @@ namespace HangmanGame
                     letter.IsVisible = true;
                 }
             }
+            LettersLeftHidden = 0;
         }
 
         private void InitLetters()
@@ -162,6 +163,7 @@ namespace HangmanGame
                 if(letter == ' ')
                 {
                     _letters.Add(new Letter(letter, true));
+                    LettersLeftHidden--;
                 }
                 else
                 {
